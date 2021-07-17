@@ -8,7 +8,14 @@
 <body>
     <div id="1"><span>For any finite set $S$, let $|S|$ denote the number of elements in $S$. Find the number of ordered pairs $(A,B)$ such that $A$ and $B$ are (not necessarily distinct) subsets of $\{1,2,3,4,5\}$ that satisfy\[|A| \cdot |B| = |A \cap B| \cdot |A \cup B|\]</span></div>
     <script>
-        renderMathInElement( document.getElementById('1') );
+        var display_options = [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\(", right: "\\)", display: false},
+          {left: "\\begin{align}", right: "\\end{align}", display: true},
+          {left: "\\[", right: "\\]", display: true}
+        ]
+        renderMathInElement( document.body, display_options );
     </script>
 </body>
 </html>
