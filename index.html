@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-	<title>Minimal example</title>
-	<link rel="stylesheet" href="katex.min.css">
-	<script src="katex.min.js"></script>
-	<script src="smrender.js"></script>
-
-<style>
-/* optional - uncomment and customise next line to change maths font size
-	.katex { font-size: 1em !important; } 
-*/ 
-</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js"></script>
 </head>
-
-<body onload="myRender()">
-This is inline $\left\{\frac{1}{n^2}\right\}$ 
-but this is displayed \[\int_0^1\frac{x^4(1-x)^4}{1+x^2}\,dx =\frac{22}{7}-\pi\]
-centred on its own line.
+<body>
+    <div id="1"><span>$$2+\frac{1}{x}$$</span></div>
+    <script>
+        renderMathInElement(document.body);
+    </script>
 </body>
 </html>
