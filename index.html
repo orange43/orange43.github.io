@@ -1,12 +1,21 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css" integrity="sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js" integrity="sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp" crossorigin="anonymous"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js" integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl" crossorigin="anonymous"
-        onload="renderMathInElement(document.body);"></script>
-  </head>
- <body>
-   fact: $a^2b^4c^6d^8 \ne N \implies ab^2c^3d^4 \ne \sqrt{N}$
- </body>
+<html lang="en">
+<head>
+	<title>Minimal example</title>
+	<link rel="stylesheet" href="katex.min.css">
+	<script src="katex.min.js"></script>
+	<script src="smrender.js"></script>
+
+<style>
+/* optional - uncomment and customise next line to change maths font size
+	.katex { font-size: 1em !important; } 
+*/ 
+</style>
+</head>
+
+<body onload="myRender()">
+This is inline $\left\{\frac{1}{n^2}\right\}$ 
+but this is displayed \[\int_0^1\frac{x^4(1-x)^4}{1+x^2}\,dx =\frac{22}{7}-\pi\]
+centred on its own line.
+</body>
 </html>
