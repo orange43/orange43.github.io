@@ -6,16 +6,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js"></script>
 </head>
 <body>
-    <div id="1"><span> "For any finite set $S$, let $|S|$ denote the number of elements in $S$. Find the number of ordered pairs $(A,B)$ such that $A$ and $B$ are (not necessarily distinct) subsets of $\{1,2,3,4,5\}$ that satisfy\[|A| \cdot |B| = |A \cap B| \cdot |A \cup B|\]" </span></div>
+    <div>The formula $a^2+b^2=c^2$ will be rendered inline, but $$a^2+b^2=c^2$$ will be rendered as a block element.</div>
+    <br>
+    <div>The formula \(a^2+b^2=c^2\) will be rendered inline, but \[a^2+b^2=c^2\] will be rendered as a block element.</div>
     <script>
-        var display_options = [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\(", right: "\\)", display: false},
-          {left: "\\begin{align}", right: "\\end{align}", display: true},
-          {left: "\\[", right: "\\]", display: true}
-        ]
-        renderMathInElement( document.getElementById('1') , display_options );
+      renderMathInElement(
+          document.body,
+          {
+              delimiters: [
+                  {left: "$$", right: "$$", display: true},
+                  {left: "\\[", right: "\\]", display: true},
+                  {left: "$", right: "$", display: false},
+                  {left: "\\(", right: "\\)", display: false}
+              ]
+          }
+      );
     </script>
 </body>
 </html>
