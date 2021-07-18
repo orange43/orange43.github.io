@@ -4,11 +4,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/contrib/auto-render.min.js"></script>
+    <style>
+        box {
+          width: 600px;
+          border: 1px solid black;
+          padding: 50px;
+          margin: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        For any finite set $S$, let $|S|$ denote the number of elements in $S$. Find the number of ordered pairs $(A,B)$ such that $A$ and $B$
-        are (not necessarily distinct) subsets of $\{1,2,3,4,5\}$ that satisfy $$|A| \cdot |B| = |A \cap B| \cdot |A \cup B|$$
+    <div id='container' class='box'>
+        <div>
+            For any finite set $S$, let $|S|$ denote the number of elements in $S$. Find the number of ordered pairs $(A,B)$ such that $A$ and $B$
+            are (not necessarily distinct) subsets of $\{1,2,3,4,5\}$ that satisfy $$|A| \cdot |B| = |A \cap B| \cdot |A \cup B|$$
+        </div>
     </div>
     <script>
       renderMathInElement(
