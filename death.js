@@ -151,3 +151,4 @@ function log(){ //draw on canvas
         ctx.fillText( cycle[j].toString() , vs[j][0], vs[j][1]+9 );
     }
 }
+begin();
