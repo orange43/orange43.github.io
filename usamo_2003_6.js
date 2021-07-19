@@ -48,34 +48,35 @@ function operate(x){ //replace the number on vertex x with the difference of its
     cycle[x] = Math.abs(cycle[(x+1) % 6] - cycle[(x+5) % 6]);
     var sum = cycle.reduce((a, b) => a + b, 0)
     if(sum == 0){ status = 'W'; }
-
-    for(var t = 0; t < 3; t++){
-        var pass = true;
-        var ratio = -1;
-        for(var j = 0; j < 6; j++){
-            var ind = (j - t + 6) % 6;
-            if( (j - t + 3) % 3 == 2 ){
-                if( cycle[j] !== 0 ){
-                    pass = false; break;
-                }
-            } else if (ratio == -1){
-                ratio = cycle[j]
-            } else {
-                if( cycle[j] !== ratio ){
-                    pass = false; break;
+    else{
+        for(var t = 0; t < 3; t++){
+            var pass = true;
+            var ratio = -1;
+            for(var j = 0; j < 6; j++){
+                var ind = (j - t + 6) % 6;
+                if( (j - t + 3) % 3 == 2 ){
+                    if( cycle[j] !== 0 ){
+                        pass = false; break;
+                    }
+                } else if (ratio == -1){
+                    ratio = cycle[j]
+                } else {
+                    if( cycle[j] !== ratio ){
+                        pass = false; break;
+                    }
                 }
             }
-        }
-        if( pass ){
-            status = 'L' + t.toString();
-            var loss_interval = setInterval(function(){ 
-                loss_animation += 0.03;
-                if( loss_animation > 0.99){
-                    loss_animation = 1;
-                    clearInterval( loss_interval );
-                }
-                log();
-            }, 100);
+            if( pass ){
+                status = 'L' + t.toString();
+                var loss_interval = setInterval(function(){ 
+                    loss_animation += 0.03;
+                    if( loss_animation > 0.99){
+                        loss_animation = 1;
+                        clearInterval( loss_interval );
+                    }
+                    log();
+                }, 100);
+            }
         }
     }
 
