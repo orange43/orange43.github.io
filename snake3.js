@@ -390,3 +390,5 @@ function mcts( player_snake, player_apple, sims, root ){
 	backpropagate( path, v );
     }
 }
+
+begin();
