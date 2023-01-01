@@ -99,7 +99,7 @@ function reset(){
 function place_apple( bot ){
     if( !sim.terminal ){
 	var tree = new Tree(sim);
-	mcts( bot, bot, 1504, tree );
+	mcts( bot, bot, 144, tree );
 	var Ns = [];
 	var m = sim.get_moves();
 	var L = m.length;
