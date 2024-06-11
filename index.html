@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<style>
+			canvas {
+				padding-left: 0;
+				padding-right: 0;
+				margin-left: auto;
+				margin-right: auto;
+				display: block;
+				border: 10px inset green;
+			}
+		</style>
+	</head>
+  	<body>
+		<canvas id="CAN" width="600px" height="600px"></canvas>
+		<p id="COUNT" style="text-align:center;white-space:pre"></p>
+		<p id="INFO" style="text-align:center">
+			WASD or Arrow Keys to move, Z to undo, R to reset.<br>
+			Move onto a red tile to grow the snake.<br>
+			Grow 33 times to win.
+		</p>
+		<script type="text/javascript" src="snake_hashes.json"></script>
+		<script src="snake.js"></script>
+		<script id="INIT" type="text/javascript"> 
+			const canvas = document.getElementById( "CAN" );
+			const counter = document.getElementById( "COUNT" );
+			const ctx = canvas.getContext("2d");
+			function componentToHex(c) {
+				var d = Math.max(Math.min(255,Math.round(c)),0);
+  				var hex = d.toString(16);
+  				return hex.length == 1 ? "0" + hex : hex;
+			}
+			function rgbToHex(r, g, b) {
+  				return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+			}
+			const can_store = typeof(Storage) !== "undefined"; 
+		</script>
+		<script id="LOG" type="text/javascript">
+  	      	const N = Snake.N;
+			const grid_size = 600/N;
+			Snake.prototype.log = async function(){
+				//draw grid
+				ctx.lineWidth = 2;
+				for( var x = 0; x < N; x++ ){
+					for( var y = 0; y < N; y++ ){
+						if( (x+y)%2 == 0 ){
+							ctx.fillStyle = rgbToHex(250,250,250);
+						} else {
+							ctx.fillStyle = rgbToHex(255,255,255);
+						}
+						ctx.fillRect( x*grid_size, y*grid_size, grid_size, grid_size );
+						ctx.strokeRect( x*grid_size, y*grid_size, grid_size, grid_size );
+					}
+				}
+				//draw apple
+				x = this.apple % (N+1);
+				y = (this.apple / (N+1))>>0;
+				ctx.fillStyle = rgbToHex(255,100,100);
+				ctx.fillRect( x*grid_size, y*grid_size, grid_size, grid_size );
+				ctx.strokeRect( x*grid_size, y*grid_size, grid_size, grid_size );
+				//draw snake
+				var col = "default";
+				if( this.snake.length == N*N && total_moves < 270 ){ col = "win"; }
+				else if( this.get_moves().length == 0){ col = "loss"; }
+				
+				ctx.lineWidth = 1;
+				for( var i = this.snake.length-1; i >= 0; i-- ){
+					x = this.snake[i] % (N+1);
+					y = (this.snake[i] / (N+1))>>0;
+					var offset = Math.floor(
+						grid_size/3 + 
+						Math.min(grid_size/2.5/(this.snake.length-1),grid_size/1.5/N/N)
+						* (i-this.snake.length))+0.5;
+					var color_p = 1 + (i-this.snake.length)/(1.5*N*N);
+					switch( col ){
+						case "win":  ctx.fillStyle = rgbToHex(255,255-40*color_p,255-250*color_p); break;
+						case "loss": ctx.fillStyle = rgbToHex(255-90*color_p,255-90*color_p,255-90*color_p); break;
+						default:     ctx.fillStyle = rgbToHex(255-120*color_p,255,255-155*color_p); break;
+					}
+					ctx.fillRect( x*grid_size + offset, y*grid_size + offset, grid_size-2*offset, grid_size-2*offset );
+					ctx.strokeRect( x*grid_size + offset, y*grid_size + offset, grid_size-2*offset, grid_size-2*offset );
+				}
+				//update text
+				/*var eval = 0;
+				if(this.snake.length < N*N){
+					eval = (await this.eval()) - N*N + this.snake.length + 1;
+				}*/
+				var text = `Moves: ${total_moves}`;
+				/*var checkpoint_str = "\n\n";
+				let L = checkpoints.length;
+				for( var i = 0; i < N*N-3; i++ ){
+					if( i < L ){
+						let sss = checkpoints[i].toString();
+						checkpoint_str += `${sss}\t`;
+					} else {
+						checkpoint_str += "---\t"
+					}
+					if( i%11 == 10 ){
+						checkpoint_str += "\n";
+					}
+				}*/
+				counter.innerText = text //+ checkpoint_str;
+			}
+    		</script>
+		<script id="BOTS" type="text/javascript">
+			async function default_apple(pos){
+				let moves = pos.get_moves();
+				return moves[Math.floor(Math.random()*moves.length)];
+			}
+			async function taxi_apple(pos){
+				let headY = (pos.snake[0] / (N+1)) >> 0;
+				let headX = pos.snake[0] % (N+1);
+				
+				let max_taxi = -1;
+				let chosen_move = -1;
+				let moves = pos.get_moves();
+				for( var i = moves.length-1; i >= 0; i-- ){
+					let y = (moves[i] / (N+1)) >> 0;
+					let x = moves[i] % (N+1);
+					let v = Math.abs(headX-x) + Math.abs(headY-y);
+					if( v > max_taxi ){
+						chosen_move = moves[i];
+						max_taxi = v;
+					}
+				}
+				return chosen_move;
+			}
+			async function good_apple(pos){
+				let moves = pos.get_moves();
+				let M = -1;
+				let good_moves = [];
+				let = plist = [];
+				for( var i = moves.length-1; i >= 0; i-- ){
+					let move = moves[i];
+					let P = pos.advance(move).eval();
+					plist.push(P.then(
+						e => {
+							if( e > M ){
+								good_moves = [];
+								M = e;
+							}
+							if ( e == M ){
+								good_moves.push( move );
+							}
+						}
+					));
+					//plist.push(p);
+				}
+				await Promise.all(plist);
+				return good_moves[Math.floor(Math.random()*good_moves.length)];
+			}
+		</script>
+		<script id="EVAL" type="text/javascript">
+			const table_url = "https://firefly922d.table.core.windows.net/table6";
+			const sas_token = "sv=2022-11-02&ss=t&srt=sco&sp=rwdlacu&se=2024-06-11T21:49:16Z&st=2024-06-11T13:49:16Z&spr=https,http&sig=VdR5mMvD7R5682cYoQ4wLPrdOZhajpdYAFHD13zg784%3D";
+			async function query( pk, rk ){
+				var sk = pk.toString()+" "+rk.toString();
+				if( can_store ){
+					let loc = localStorage.getItem( sk );
+					if( loc !== null ){
+						return parseInt(loc);
+					}
+				}
+			
+				const queryUrl = `${table_url}?$filter=PartitionKey eq '${pk}' and RowKey eq '${rk}'&${sas_token}`;
+				const J = await fetch(queryUrl,{ headers:{ 
+						'Accept': 'application/json'
+					}
+				}).then(response => response.json())
+				.catch(error => console.error('Error querying table:', error));
+				if( J['value'].length == 0 ){ return 500; }
+				
+				let val = J['value'][0]['Distance'];
+				if( can_store ){
+					if( localStorage.length > 3456 ){
+						let k = localStorage.key( Math.floor(Math.random()*localStorage.length) );
+						localStorage.removeItem( k );
+					}
+					localStorage.setItem( sk, val.toString() );
+				}
+				return val;
+			}
+			Snake.prototype.eval = async function(){
+				let h = this.hash();
+				let pk = (h[1] / (1<<16))>>0;
+				let rk = (h[1] % (1<<16))*Math.pow(2,32) + h[0];
+				return await query(pk,rk);
+			}
+		</script>
+		<script id="CONTROL" type="text/javascript">
+			var s1;
+			var shistory = [];
+			var total_moves;
+			var checkpoints;
+			reset();
+			shistory = [];
+			
+			async function computer_moves(){
+				if( s1.apple == s1.snake[0] && s1.get_moves().length > 0 ){
+					switch(3){
+						case 1: s1 = s1.advance(await default_apple(s1)); break;
+						case 2: s1 = s1.advance(await taxi_apple(s1)); 	break;
+						case 3: s1 = s1.advance(await good_apple(s1)); break;
+					}
+				}
+				s1.log();
+			}
+			function player_move(j){
+				if( s1.get_moves().includes(Snake.DIRS[j]) ){
+					shistory.push( [s1,total_moves] );
+					s1 = s1.advance( Snake.DIRS[j] );
+					total_moves += 1;
+					if( s1.snake[0] == s1.apple ){
+						checkpoints.push( total_moves );
+					}
+					computer_moves();
+				} else {
+					s1.log();
+				}
+			}
+			function undo(){
+				if( shistory.length >= 1 ){
+					if( total_moves == checkpoints[checkpoints.length-1] ){
+						checkpoints.pop();
+					}
+					var info = shistory.pop();
+					s1 = info[0];
+					total_moves = info[1];
+					s1.log();
+				}
+			}
+			function reset(){
+				//shistory.push([s1,0]);
+				shistory = [];
+				total_moves = 0;
+				checkpoints = [];
+				s1 = new Snake();
+				computer_moves();
+			}
+			
+			var current_key = null;
+			var key_timer = null;
+			var key_controls = {
+				"ArrowRight": [function(){player_move(0);}, 125],
+				"d":		  [function(){player_move(0);}, 250],
+				"r":		  [reset	 				  , 0  ],
+				"ArrowDown":  [function(){player_move(1);}, 125],
+				"s":		  [function(){player_move(1);}, 250],
+				"ArrowLeft":  [function(){player_move(2);}, 125],
+				"a":		  [function(){player_move(2);}, 250],
+				"ArrowUp":    [function(){player_move(3);}, 125],
+				"w":		  [function(){player_move(3);}, 250],
+				"z":		  [undo       				  , 200],
+			}
+			
+			document.onkeydown = function(event){
+				if( event.key in key_controls && !(current_key == event.key) ){
+					current_key = event.key;
+					if( key_timer !== null ){
+						clearInterval( key_timer );
+					}
+				
+					key_controls[current_key][0]();
+					if( key_controls[current_key][1] > 0 ){
+						key_timer = setInterval( ...key_controls[current_key] );
+					}
+				}
+			}
+			document.onkeyup= function(event) {
+				if( event.key == current_key ){
+					current_key = null;
+					if( key_timer !== null ){
+						clearInterval( key_timer );
+					}
+				}
+			}
+		</script>
+	</body>
+</html>
