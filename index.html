@@ -153,7 +153,8 @@
 		</script>
 		<script id="EVAL" type="text/javascript">
 			const table_url = "https://firefly922d.table.core.windows.net/table6";
-			const sas_token = "sv=2022-11-02&ss=t&srt=o&sp=r&se=2024-06-18T04:14:12Z&st=2024-06-14T20:14:12Z&spr=https&sig=5ag2O3OnrD%2BYg48DB4tedkXJziwIojZGfcYM6b8p3GQ%3D";
+			//This isn't the proper way to do it, but security is not a concern here.
+			const sas_token = "sv=2022-11-02&ss=t&srt=o&sp=r&se=2025-02-09T07:27:44Z&st=2024-10-08T22:27:44Z&spr=https&sig=6X47MeRLu%2BPdWIpy5WZk9c0soPamv%2FLfsoUj171nXi8%3D";
 			async function query( pk, rk ){
 				var sk = pk.toString()+" "+rk.toString();
 				if( can_store ){
